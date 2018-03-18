@@ -1,0 +1,52 @@
+{
+  "name": "scheduled-chained-lambda",
+  "version": "1.0.0",
+  "description": "Consume SQS messages with a CloudWatch scheduled message-count check and chained invocation of lambda functions",
+  "main": "src/main/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jgisler/aws-sqs-consumers.git"
+  },
+  "keywords": [
+    "AWS",
+    "SQS",
+    "Lambda",
+    "SAM"
+  ],
+  "author": "James Gisler",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/jgisler/aws-sqs-consumers/issues"
+  },
+  "homepage": "https://github.com/jgisler/aws-sqs-consumers#readme",
+  "jshintConfig": {
+    "node": true,
+    "esversion": 6,
+    "bitwise": false,
+    "camelcase": false,
+    "curly": true,
+    "indent": 2,
+    "newcap": true,
+    "predef": [
+      "const",
+      "let",
+      "after",
+      "afterEach",
+      "before",
+      "beforeEach",
+      "define",
+      "describe",
+      "exports",
+      "it",
+      "web3",
+      "artifacts",
+      "contract",
+      "assert",
+      "async",
+      "await"
+    ]
+  }
+}

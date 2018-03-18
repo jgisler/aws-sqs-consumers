@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: |
+  Consume SQS messages with a CloudWatch scheduled message-count check and chained invocation of lambda functions
+
+Parameters:
+
+Resources:
+
+  HandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs6.10
+      Handler: src/index.handler
