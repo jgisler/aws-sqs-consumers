@@ -12,7 +12,7 @@ class QueueProcessor {
 
    constructor(s3Client, sqsClient) {
       this.class = this.constructor.name;
-      
+
       this.s3Client = s3Client;
       this.sqsClient = sqsClient;
 
@@ -23,15 +23,19 @@ class QueueProcessor {
    }
 
    processMessages(queueUrl) {
-
       return this.receiveMessages(queueUrl)
          .then((result) => this.persistMessages(result.Messages))
-         .then((result) => this.deleteMessages(result, queueUrl));
+         .then((messages) => this.deleteMessages(messages, queueUrl));
+   }
 
+   persistMessages(messages) {
+      return Promise.all(
+         messages.map((message) => this.saveMessage(message))
+      ).then(() => messages);
    }
 
    receiveMessages(queueUrl) {
-      return this.sqsClient.receiveMessages({
+      return this.sqsClient.receiveMessage({
          QueueUrl: queueUrl,
          WaitTimeSeconds: this.waitTimeInSeconds,
          VisibilityTimeout: this.messageVisibilityTimeoutInSeconds,
@@ -39,15 +43,7 @@ class QueueProcessor {
       }).promise();
    }
 
-   persistMessages(messages) {
-      const putPromises = [];
-      messages.forEach((message) => {
-         messageFiles.push(this.putObject(message));
-      });
-      return Promise.all(putPromises);
-   }
-
-   putObject(message) {
+   saveMessage(message) {
       return this.s3Client.putObject({
          Bucket: this.messageBucket,
          Key: `${message.MessageId}.json`,
@@ -56,10 +52,17 @@ class QueueProcessor {
       }).promise();
    }
 
-   deleteMessages(message, queueUrl) {
-
+   deleteMessages(messages, queueUrl) {
+      return this.sqsClient.deleteMessageBatch({
+         Entries : messages.map((message) => {
+            return {
+               Id: message.MessageId,
+               ReceiptHandle: message.ReceiptHandle
+            };
+         }),
+         QueueUrl: queueUrl
+      }).promise();
    }
-
 }
 
 let theInstance;
