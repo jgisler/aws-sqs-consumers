@@ -1,4 +1,6 @@
 const chai = require('chai');
+const chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const AWS = require('aws-sdk');
@@ -8,7 +10,6 @@ const Mocks = require('./MockResponses');
 const QueueProcessor = require('../src/lib/QueueProcessor');
 
 describe('QueueProcessor', () => {
-
 
    let messageId;
    let queueProcessor;
@@ -45,64 +46,39 @@ describe('QueueProcessor', () => {
    });
 
    describe('deleteMessageBatch', () => {
-      it('should return success', (done) => {
+      it('should return success', () => {
          const messages = Mocks.SQS_RECEIVE_MESSAGE_RESPONSE.Messages;
-         queueProcessor.deleteMessages(messages, 'some-queue-url')
-            .then((result) => {
-               expect(result).to.deep.equal(Mocks.SQS_DELETE_MESSAGE_BATCH_RESPONSE);
-               done();
-            }).catch((error) => {
-               done(error);
-            });
+         return expect(queueProcessor.deleteMessages(messages, 'some-queue-url'))
+            .to.eventually.deep.equal(Mocks.SQS_DELETE_MESSAGE_BATCH_RESPONSE);
       });
    });
 
    describe('saveMessage', () => {
-      it('should return success', (done) => {
+      it('should return success', () => {
          const message = Mocks.SQS_RECEIVE_MESSAGE_RESPONSE.Messages[0];
-         queueProcessor.saveMessage(message)
-            .then((result) => {
-               expect(result).to.deep.equal(Mocks.S3_PUT_OBJECT_RESPONSE);
-               done();
-            }).catch((error) => {
-               done(error);
-            });
+         return expect(queueProcessor.saveMessage(message))
+            .to.eventually.deep.equal(Mocks.S3_PUT_OBJECT_RESPONSE);
       });
    });
 
    describe('receiveMessages', () => {
-      it('should return success', (done) => {
-         queueProcessor.receiveMessages('some-queue-url')
-            .then((result) => {
-               expect(result).to.deep.equal(Mocks.SQS_RECEIVE_MESSAGE_RESPONSE);
-               done();
-            }).catch((error) => {
-               done(error);
-            });
+      it('should return success', () => {
+         return expect(queueProcessor.receiveMessages('some-queue-url'))
+            .to.eventually.deep.equal(Mocks.SQS_RECEIVE_MESSAGE_RESPONSE);
       });
    });
 
    describe('persistMessages', () => {
-      it('should return success', (done) => {
-         queueProcessor.persistMessages(Mocks.SQS_RECEIVE_MESSAGE_RESPONSE.Messages)
-            .then((result) => {
-               expect(result).to.deep.equal(Mocks.SQS_RECEIVE_MESSAGE_RESPONSE.Messages);
-               done();
-            }).catch((error) => {
-               done(error);
-            });
+      it('should return success', () => {
+         return expect(queueProcessor.persistMessages(Mocks.SQS_RECEIVE_MESSAGE_RESPONSE.Messages))
+            .to.eventually.deep.equal(Mocks.SQS_RECEIVE_MESSAGE_RESPONSE.Messages);
       });
    });
 
    describe('processMessages', () => {
-      it('should return success', (done) => {
-         queueProcessor.processMessages('some-queue-url')
-            .then((result) => {
-               expect(result).to.deep.equal(Mocks.SQS_DELETE_MESSAGE_BATCH_RESPONSE);
-               done();
-            }).catch((error) => {
-               done(error);
-            });
+      it('should return success', () => {
+         return expect(queueProcessor.processMessages('some-queue-url'))
+            .to.eventually.deep.equal(Mocks.SQS_DELETE_MESSAGE_BATCH_RESPONSE);
       });
    });
 });

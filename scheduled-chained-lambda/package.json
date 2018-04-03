@@ -4,7 +4,7 @@
   "description": "Consume SQS messages with a CloudWatch scheduled message-count check and chained invocation of lambda functions",
   "main": "src/main/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --name '*.spec.js' ./test"
   },
   "repository": {
     "type": "git",
@@ -48,5 +48,12 @@
       "async",
       "await"
     ]
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.218.1",
+    "aws-sdk-mock": "^1.7.0",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.0.5"
   }
 }
